@@ -1,0 +1,77 @@
+import os
+from datetime import datetime
+
+class Fișier:
+    def __init__(self, nume, creat_la, actualizat_la):
+        self.nume = nume
+        self.creat_la = creat_la
+        self.actualizat_la = actualizat_la
+
+    def obține_extensie(self):
+        return os.path.splitext(self.nume)[1]
+
+    def obține_info(self):
+        return f"Nume: {self.nume}\nExtensie: {self.obține_extensie()}\nCreat: {self.creat_la}\nActualizat: {self.actualizat_la}\n"
+
+class FișierText(Fișier):
+    def __init__(self, nume, creat_la, actualizat_la, număr_linii, număr_cuvinte, număr_caractere):
+        super().__init__(nume, creat_la, actualizat_la)
+        self.număr_linii = număr_linii
+        self.număr_cuvinte = număr_cuvinte
+        self.număr_caractere = număr_caractere
+
+    def obține_info(self):
+        return super().obține_info() + f"Număr de Linii: {self.număr_linii}\nNumăr de Cuvinte: {self.număr_cuvinte}\nNumăr de Caractere: {self.număr_caractere}\n"
+
+class FișierImagine(Fișier):
+    def __init__(self, nume, creat_la, actualizat_la, lățime, înălțime):
+        super().__init__(nume, creat_la, actualizat_la)
+        self.lățime = lățime
+        self.înălțime = înălțime
+
+    def obține_info(self):
+        return super().obține_info() + f"Lățime: {self.lățime}\nÎnălțime: {self.înălțime}\n"
+
+class FișierProgram(Fișier):
+    def __init__(self, nume, creat_la, actualizat_la, număr_linii, număr_clase, număr_metode):
+        super().__init__(nume, creat_la, actualizat_la)
+        self.număr_linii = număr_linii
+        self.număr_clase = număr_clase
+        self.număr_metode = număr_metode
+
+    def obține_info(self):
+        return super().obține_info() + f"Număr de Linii: {self.număr_linii}\nNumăr de Clase: {self.număr_clase}\nNumăr de Metode: {self.număr_metode}\n"
+
+class MonitorDirector:
+    def __init__(self, cale_director):
+        self.cale_director = cale_director
+        self.fișiere = {}
+
+    def adaugă_fișier(self, fișier):
+        self.fișiere[fișier.nume] = fișier
+
+    def realizează_snapshot(self):
+        acum = datetime.now()
+        for fișier in self.fișiere.values():
+            fișier.actualizat_la = acum
+
+    def info(self, nume_fișier):
+        if nume_fișier in self.fișiere:
+            print(self.fișiere[nume_fișier].obține_info())
+        else:
+            print("Fișierul nu a fost găsit.")
+
+    def status(self):
+        moment_snapshot = datetime.now()
+        print(f"Snapshot realizat la: {moment_snapshot}")
+        for fișier in self.fișiere.values():
+            stare = "Modificat" if fișier.creat_la < fișier.actualizat_la else "Nemodificat"
+            print(f"{fișier.nume} {stare}")
+
+monitor_director = MonitorDirector("/cale/către/directorul/tău")
+monitor_director.adaugă_fișier(FișierText("test.txt", datetime(2023, 10, 11, 9, 1, 28), datetime(2023, 10, 11, 9, 1, 28), 10, 50, 300))
+monitor_director.adaugă_fișier(FișierImagine("image.png", datetime(2023, 10, 11, 9, 1, 28), datetime(2024, 4, 23, 15, 30, 45), 1920, 1080))
+monitor_director.adaugă_fișier(FișierProgram("python_script.py", datetime(2023, 10, 11, 9, 1, 28), datetime(2024, 4, 23, 15, 30, 45), 100, 3, 20))
+monitor_director.realizează_snapshot()
+monitor_director.status()
+monitor_director.info("test.txt")
